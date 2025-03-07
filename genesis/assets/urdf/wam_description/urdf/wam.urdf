@@ -408,12 +408,10 @@
       </geometry>
     </collision>
   </link>
-  <joint name="bhand_spread" type="revolute">
+  <joint name="bhand_spread" type="fixed">
     <parent link="bhand_base_link"/>
     <child link="bhand_finger1_link_1"/>
     <origin rpy="0 0 0" xyz="0 -0.025 0.133"/>
-    <axis xyz="0 0 -1"/>
-    <limit effort="30" lower="0.0" upper="3.14159265359" velocity="2.0"/>
   </joint>
   <link name="bhand_finger2_link_1">
     <visual>
@@ -432,13 +430,10 @@
       </geometry>
     </collision>
   </link>
-  <joint name="bhand_spread_finger2" type="revolute">
+  <joint name="bhand_spread_finger2" type="fixed">
     <parent link="bhand_base_link"/>
     <child link="bhand_finger2_link_1"/>
     <origin rpy="0 0 0" xyz="0 0.025 0.133"/>
-    <axis xyz="0 0 1"/>
-    <limit effort="30" lower="0.0" upper="3.14159265359" velocity="2.0"/>
-    <mimic joint="bhand_spread" multiplier="1.0" offset="0"/>
   </joint>
   <link name="bhand_finger3_link_1">
     <visual>
