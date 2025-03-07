@@ -30,7 +30,7 @@ plane = scene.add_entity(
 
 wam = scene.add_entity(
     gs.morphs.URDF(
-        file = 'urdf/wam_description/urdf/wam_finger.urdf',
+        file = './wam_description/urdf/wam_finger.urdf',
         pos = (0, 0, 0),
         fixed = True,
     )
