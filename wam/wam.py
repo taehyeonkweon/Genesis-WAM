@@ -70,6 +70,8 @@ scene.build()
 # for link in wam.links:
 #     print(link.name)
 
+cube.set_friction(3.0)  # Increase cube friction
+
 arm_jnt_names = [
     "wam_joint_1",
     "wam_joint_2",
@@ -109,24 +111,30 @@ hand_dofs_idx = [wam.get_joint(name).dof_idx_local for name in hand_jnt_names]
 
 # Set gains for the hand (adjust values as needed)
 wam.set_dofs_kp(
-    kp=np.array([4000 for _ in range(3)]),  # Lower KP since fingers need less force
+    kp=np.array([300 for _ in range(3)]),  # Lower KP since fingers need less force
     dofs_idx_local=hand_dofs_idx,
 )
 wam.set_dofs_kv(
-    kv=np.array([400 for _ in range(3)]),  # Lower KV for smoother grasping
+    kv=np.array([450 for _ in range(3)]),  # Lower KV for smoother grasping
     dofs_idx_local=hand_dofs_idx,
 )
 wam.set_dofs_force_range(
-    lower=np.array([-10 for _ in range(3)]),  # Limit force to prevent over-gripping
-    upper=np.array([5 for _ in range(3)]),
+    lower=np.array([-5 for _ in range(3)]),  # Limit force to prevent over-gripping
+    upper=np.array([15 for _ in range(3)]),
     dofs_idx_local=hand_dofs_idx,
 )
 
-grasp_pos = np.array([2.2, 2.2, 2.2])
+# Apply friction to all finger links
+for link in wam.links:
+    if "bhand_finger" in link.name:  # Apply only to fingers
+        link.set_friction(3.0)  # Choose a value between 1e-2 and 5.0
+
+
+grasp_pos = np.array([1.4, 1.4, 1.4])
 
 scene.step()
 
-target_pos = np.array([1, 0, 0.25]) + tcp_offset  # desired (x, y ,z)
+target_pos = np.array([1, 0, 0.23]) + tcp_offset  # desired (x, y ,z)
 target_quat = np.array([0, 1, 0, 0]) #(w, x, y ,z)
 qpos = wam.inverse_kinematics(
     link=end_effector, 
@@ -141,7 +149,7 @@ for i in range(400):
     scene.step()
     # cam.render()
 
-for i in range(200):
+for i in range(400):
     print(f"Closing fingers {i}")
     wam.control_dofs_position(grasp_pos, hand_dofs_idx)
     scene.step()
@@ -152,7 +160,7 @@ target_pos = np.array([1, 0, 1]) + tcp_offset
 target_quat = np.array([0, 1, 0, 0]) #(w, x, y ,z)
 qpos = wam.inverse_kinematics(link=end_effector, pos=target_pos, quat=target_quat)
 
-for i in range(600):
+for i in range(800):
     print(f"Lifting {i}")
     wam.control_dofs_position(qpos[:7], np.arange(7))  # Move arm
     wam.control_dofs_position(grasp_pos, hand_dofs_idx)  # Maintain grasp force
