@@ -70,7 +70,7 @@ cam_0 = scene.add_camera(
 scene.build()
 
 cam_0_transform = trans_quat_to_T(
-    np.array([0, -0.09, 0.05]), 
+    np.array([0, -0.11, 0.02]), 
     xyz_to_quat(np.array([180-5, 0, 0])))
 
 # rgb = cam.render(rgb=True)
@@ -137,7 +137,7 @@ wam.set_dofs_force_range(
 # Apply friction to all finger links
 for link in wam.links:
     if "bhand_finger" in link.name:  # Apply only to fingers
-        link.set_friction(5.0)  # Choose a value between 1e-2 and 5.0
+        link.set_friction(3.0)  # Choose a value between 1e-2 and 5.0
 
 
 grasp_pos = np.array([1.4, 1.4, 1.4])
