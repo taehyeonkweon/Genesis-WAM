@@ -1,3 +1,7 @@
+### Genesis Wam
+![Genesis WAM simulation GIF](genesis_wam.gif)
+
+
 ![Genesis](imgs/big_text.png)
 
 ![Teaser](imgs/teaser.png)
