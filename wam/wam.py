@@ -38,7 +38,7 @@ wam = scene.add_entity(
 
 cube = scene.add_entity(
     gs.morphs.Box(
-        size=(0.08, 0.08, 0.08),
+        size=(0.06, 0.06, 0.06),
         pos=(1.00, 0.0, 0.05),
         collision=True,
     )
@@ -61,17 +61,11 @@ cube = scene.add_entity(
 #     GUI=True,
 # )
 
-cam_0 = scene.add_camera(
-    res=(1280, 720),
-    fov=86,
-    GUI=True,
-)
-
 scene.build()
 
-cam_0_transform = trans_quat_to_T(
-    np.array([0, -0.11, 0.02]), 
-    xyz_to_quat(np.array([180-5, 0, 0])))
+# cam_0_transform = trans_quat_to_T(
+#     np.array([0, -0.11, 0.02]), 
+#     xyz_to_quat(np.array([180-5, 0, 0])))
 
 # rgb = cam.render(rgb=True)
 
@@ -140,8 +134,7 @@ for link in wam.links:
         link.set_friction(3.0)  # Choose a value between 1e-2 and 5.0
 
 
-grasp_pos = np.array([1.4, 1.4, 1.4])
-
+grasp_pos = np.array([1.62, 1.62, 1.62])
 scene.step()
 
 target_pos = np.array([1, 0, 0.23]) + tcp_offset  # desired (x, y ,z)
@@ -157,16 +150,16 @@ for i in range(400):
     print(f"Moving to cube {i}")
     wam.control_dofs_position(qpos[:7], np.arange(7))
     scene.step()
-    cam_0.set_pose(transform=trans_quat_to_T(end_effector.get_pos(), end_effector.get_quat()).cpu().numpy() @ cam_0_transform)
-    cam_0.render(rgb=True, depth=False)
+    # cam_0.set_pose(transform=trans_quat_to_T(end_effector.get_pos(), end_effector.get_quat()).cpu().numpy() @ cam_0_transform)
+    # cam_0.render(rgb=True, depth=False)
     # cam.render()
 
 for i in range(400):
     print(f"Closing fingers {i}")
     wam.control_dofs_position(grasp_pos, hand_dofs_idx)
     scene.step()
-    cam_0.set_pose(transform=trans_quat_to_T(end_effector.get_pos(), end_effector.get_quat()).cpu().numpy() @ cam_0_transform)
-    cam_0.render(rgb=True, depth=False)
+    # cam_0.set_pose(transform=trans_quat_to_T(end_effector.get_pos(), end_effector.get_quat()).cpu().numpy() @ cam_0_transform)
+    # cam_0.render(rgb=True, depth=False)
     # cam.render()
 
 # Step 4: Lift the cube
@@ -174,13 +167,38 @@ target_pos = np.array([1, 0, 1]) + tcp_offset
 target_quat = np.array([0, 1, 0, 0]) #(w, x, y ,z)
 qpos = wam.inverse_kinematics(link=end_effector, pos=target_pos, quat=target_quat)
 
-for i in range(800):
+for i in range(600):
     print(f"Lifting {i}")
     wam.control_dofs_position(qpos[:7], np.arange(7))  # Move arm
     wam.control_dofs_position(grasp_pos, hand_dofs_idx)  # Maintain grasp force
     scene.step()
-    cam_0.set_pose(transform=trans_quat_to_T(end_effector.get_pos(), end_effector.get_quat()).cpu().numpy() @ cam_0_transform)
-    cam_0.render(rgb=True, depth=False)
+    # cam_0.set_pose(transform=trans_quat_to_T(end_effector.get_pos(), end_effector.get_quat()).cpu().numpy() @ cam_0_transform)
+    # cam_0.render(rgb=True, depth=False)
     # cam.render()
 
-# cam.stop_recording(save_to_filename="wam_nospread.mp4", fps=60)
+# # Step 5: Move the arm
+# target_pos = np.array([1, 2.5, 1]) + tcp_offset
+# target_quat = np.array([0, 1, 0, 0]) #(w, x, y ,z)
+# qpos = wam.inverse_kinematics(link=end_effector, pos=target_pos, quat=target_quat)
+
+# grasp_pos_open = np.array([0, 0, 0])
+
+
+# for i in range(600):
+#     print(f"Moving {i}")
+#     wam.control_dofs_position(qpos[:7], np.arange(7))  # Move arm
+#     wam.control_dofs_position(grasp_pos, hand_dofs_idx)  # Maintain grasp force
+#     scene.step()
+#     # cam_0.set_pose(transform=trans_quat_to_T(end_effector.get_pos(), end_effector.get_quat()).cpu().numpy() @ cam_0_transform)
+#     # cam_0.render(rgb=True, depth=False)
+    # cam.render()
+
+# for i in range(400):
+#     print(f"Opening fingers {i}")
+#     wam.control_dofs_position(grasp_pos_open, hand_dofs_idx)
+#     scene.step()
+#     # cam_0.set_pose(transform=trans_quat_to_T(end_effector.get_pos(), end_effector.get_quat()).cpu().numpy() @ cam_0_transform)
+#     # cam_0.render(rgb=True, depth=False)
+#     # cam.render()
+
+# cam.stop_recording(save_to_filename="wam_grasp.mp4", fps=60)
